@@ -245,13 +245,21 @@ with tabs[5]:
             # 이미지 로드 및 설정
             image = Image.open(img_path).convert("RGBA")
             draw = ImageDraw.Draw(image)
-            font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'AppleGothic.ttf')  # 배포용 경로로 수정
-            if os.path.exists(font_path):
-                font = ImageFont.truetype(font_path, size=55)
-            else:
-                st.error("폰트 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
+            # 폰트 파일 경로 수정 및 시스템 폰트 사용
+            font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'AppleGothic.ttf')
+            fallback_font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'Arial.ttf')
+            try:
+                if os.path.exists(font_path):
+                    font = ImageFont.truetype(font_path, size=55)
+                elif os.path.exists(fallback_font_path):
+                    font = ImageFont.truetype(fallback_font_path, size=55)
+                else:
+                    # 시스템 기본 폰트 사용 시도
+                    font = ImageFont.load_default()
+            except Exception as e:
+                st.error(f"폰트 파일 로드 중 오류 발생: {e}")
                 st.stop()
-
+                
             # 날짜 계산 로직 (교외체험학습)
             start_date = st.session_state.get("start_date")
             end_date = st.session_state.get("end_date")
