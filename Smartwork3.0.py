@@ -21,35 +21,28 @@ if 'step' not in st.session_state:
 if 'plans' not in st.session_state:
     st.session_state.plans = {}
 
-# 로고 파일 경로 - 상대 경로로 수정하여 배포 시 호환성 유지
-logo_path = os.path.join(os.path.dirname(__file__), 'images', 'logo.png')  # 로고 이미지 경로
+# 로고 파일 경로
+logo_path = "/Users/kiyun/Documents/Study-work/images/logo.png"  # 로고 이미지 경로
 
 # 로컬 이미지 파일을 Base64로 변환하는 함수
 def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            encoded = base64.b64encode(img_file.read()).decode()
-        return encoded
-    except FileNotFoundError:
-        st.error("로고 이미지 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
-        return None
+    with open(image_path, "rb") as img_file:
+        encoded = base64.b64encode(img_file.read()).decode()
+    return encoded
 
-# Base64 인코딩된 로고 이미지 로드
+# Base64 인코딩된 로고 이미지
 logo_base64 = get_base64_image(logo_path)
 
 # 헤더 영역 추가
 st.title("교외체험학습 신청서")
 
-# 로고와 서브타이틀을 왼쪽에 배치 (로고가 존재할 경우에만)
-if logo_base64:
-    st.markdown(f"""
-        <div style="display: flex; align-items: center;">
-            <img src="data:image/png;base64,{logo_base64}" alt="로고" style="margin-right: 10px; width: 40px; height: 40px;">
-            <h3 style="margin: 0;">온양한올고등학교</h3>
-        </div>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("### 온양한올고등학교")
+# 로고와 서브타이틀을 왼쪽에 배치
+st.markdown(f"""
+    <div style="display: flex; align-items: center;">
+        <img src="data:image/png;base64,{logo_base64}" alt="로고" style="margin-right: 10px; width: 40px; height: 40px;">
+        <h3 style="margin: 0;">온양한올고등학교</h3>
+    </div>
+""", unsafe_allow_html=True)
 
 # 단일 탭 그룹 생성
 tabs = st.tabs([
@@ -223,9 +216,9 @@ with tabs[4]:
 with tabs[5]:
     st.header("신청서 확인")
 
-    # 이미지 파일 경로 설정 - 로컬 및 배포 환경 모두에서 호환되도록 수정
-    img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork001.png')
-    extra_img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork002.png')  # 별지 이미지
+    # 이미지 파일 경로 설정
+    img_path = "/Users/kiyun/Documents/Study-work/images/studywork001.png"
+    extra_img_path = "/Users/kiyun/Documents/Study-work/images/studywork002.png"  # 별지 이미지
 
     # 필수 데이터 유효성 검사
     required_fields = [
@@ -241,20 +234,8 @@ with tabs[5]:
             # 이미지 로드 및 설정
             image = Image.open(img_path).convert("RGBA")
             draw = ImageDraw.Draw(image)
-            # 폰트 파일 경로 수정 및 시스템 폰트 사용
-            font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'AppleGothic.ttf')
-            fallback_font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'Arial.ttf')
-            try:
-                if os.path.exists(font_path):
-                    font = ImageFont.truetype(font_path, size=55)
-                elif os.path.exists(fallback_font_path):
-                    font = ImageFont.truetype(fallback_font_path, size=55)
-                else:
-                    # 시스템 기본 폰트 사용 시도
-                    font = ImageFont.load_default()
-            except Exception as e:
-                st.error(f"폰트 파일 로드 중 오류 발생: {e}")
-                st.stop()
+            font_path = "/Library/Fonts/AppleGothic.ttf"  # Mac 기본 폰트
+            font = ImageFont.truetype(font_path, size=55)
 
             # 날짜 계산 로직 (교외체험학습)
             start_date = st.session_state.get("start_date")
@@ -264,7 +245,7 @@ with tabs[5]:
             submit_date_formatted = today.strftime("%Y년 %m월 %d일")
             
             try:
-                if isinstance(start_date, date) and isinstance(end_date, date):
+                if isinstance(start_date, datetime.date) and isinstance(end_date, datetime.date):
                     duration = (end_date - start_date).days + 1  # 시작일과 종료일 포함
                     start_date_formatted = start_date.strftime("%Y년 %m월 %d일")
                     end_date_formatted = end_date.strftime("%Y년 %m월 %d일")
@@ -273,14 +254,6 @@ with tabs[5]:
             except Exception as e:
                 st.error(f"날짜 계산 중 오류 발생: {e}")
                 st.stop()
-
-            # 이미지에 텍스트 추가 (예시)
-            draw.text((770, 590), st.session_state.get("student_name", ""), fill="black", font=font)
-        
-        except FileNotFoundError:
-            st.error("이미지 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
-        except Exception as e:
-            st.error(f"이미지 처리 중 오류 발생: {e}")
 
             # 출석인정 기간 계산 (공휴일 제외)
             attendance_start_date = st.session_state.get("attendance_start_date")
@@ -464,28 +437,26 @@ with tabs[5]:
         except IOError as e:
             st.error(f"이미지를 처리하는 중 오류가 발생했습니다: {e}")
 
-    # PDF 생성 함수 정의
     def generate_pdf():
         try:
-            # 임시 파일 경로 설정 - 상대 경로로 수정하여 배포 시 호환성 유지
-            temp_dir = os.path.join(os.path.dirname(__file__), 'temp')
-            os.makedirs(temp_dir, exist_ok=True)
-            main_image_path = os.path.join(temp_dir, 'studywork_main.png')
-            extra_image_path = os.path.join(temp_dir, 'studywork_extra.png')
+            # 임시 파일 경로 설정
+            main_image_path = "/Users/kiyun/Documents/Study-work/temp/studywork_main.png"
+            extra_image_path = "/Users/kiyun/Documents/Study-work/temp/studywork_extra.png"
 
             # 이미지 파일 저장
+            os.makedirs(os.path.dirname(main_image_path), exist_ok=True)
             image.save(main_image_path)
-            if 'extra_needed' in st.session_state and st.session_state['extra_needed']:
+            if extra_needed:
+                os.makedirs(os.path.dirname(extra_image_path), exist_ok=True)
                 extra_image.save(extra_image_path)
 
             # PDF 생성할 이미지 파일 목록
             image_list = [main_image_path]
-            if 'extra_needed' in st.session_state and st.session_state['extra_needed']:
+            if extra_needed:
                 image_list.append(extra_image_path)
 
-            # PDF 파일 경로 설정 - 상대 경로로 수정하여 배포 시 호환성 유지
-            pdf_path = os.path.join(os.path.dirname(__file__), 'output', 'studywork_application.pdf')
-            os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+            # PDF 파일 경로 설정
+            pdf_path = "/Users/kiyun/Documents/Study-work/output/studywork_application.pdf"
 
             # PDF 파일 생성
             with open(pdf_path, "wb") as f:
@@ -502,7 +473,7 @@ with tabs[5]:
 
             # 임시 파일 삭제
             os.remove(main_image_path)
-            if 'extra_needed' in st.session_state and st.session_state['extra_needed']:
+            if extra_needed:
                 os.remove(extra_image_path)
 
         except Exception as e:
