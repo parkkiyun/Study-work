@@ -1,0 +1,7 @@
+streamlit
+Pillow
+pandas
+numpy
+holidays
+img2pdf
+streamlit-drawable-canvas
