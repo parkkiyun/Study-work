@@ -246,7 +246,11 @@ with tabs[5]:
             image = Image.open(img_path).convert("RGBA")
             draw = ImageDraw.Draw(image)
             font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'AppleGothic.ttf')  # 배포용 경로로 수정
-            font = ImageFont.truetype(font_path, size=55)
+            if os.path.exists(font_path):
+                font = ImageFont.truetype(font_path, size=55)
+            else:
+                st.error("폰트 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
+                st.stop()
 
             # 날짜 계산 로직 (교외체험학습)
             start_date = st.session_state.get("start_date")
@@ -265,6 +269,10 @@ with tabs[5]:
             except Exception as e:
                 st.error(f"날짜 계산 중 오류 발생: {e}")
                 st.stop()
+
+            # 이미지에 텍스트 추가 (예시)
+            draw.text((770, 590), st.session_state.get("student_name", ""), fill="black", font=font)
+        
         except FileNotFoundError:
             st.error("이미지 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
         except Exception as e:
