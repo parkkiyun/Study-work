@@ -224,12 +224,8 @@ with tabs[5]:
     st.header("신청서 확인")
 
     # 이미지 파일 경로 설정 - 로컬 및 배포 환경 모두에서 호환되도록 수정
-    if os.path.exists('/Users/kiyun/Documents/Study-work/images/studywork001.png'):
-        img_path = '/Users/kiyun/Documents/Study-work/images/studywork001.png'
-        extra_img_path = '/Users/kiyun/Documents/Study-work/images/studywork002.png'
-    else:
-        img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork001.png')
-        extra_img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork002.png')  # 별지 이미지
+    img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork001.png')
+    extra_img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork002.png')  # 별지 이미지
 
     # 필수 데이터 유효성 검사
     required_fields = [
@@ -259,7 +255,7 @@ with tabs[5]:
             except Exception as e:
                 st.error(f"폰트 파일 로드 중 오류 발생: {e}")
                 st.stop()
-                
+
             # 날짜 계산 로직 (교외체험학습)
             start_date = st.session_state.get("start_date")
             end_date = st.session_state.get("end_date")
