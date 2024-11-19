@@ -264,10 +264,14 @@ with st.tabs(["신청서 확인"])[0]:
     else:
         try:
             # 이미지 로드 및 설정
-            image = Image.open(img_path).convert("RGBA")
-            draw = ImageDraw.Draw(image)
-            font = ImageFont.truetype(FONT_PATH, size=55)
-            # 이미지 처리 및 추가 작업 수행
+            if os.path.exists(img_path):
+                image = Image.open(img_path).convert("RGBA")
+                draw = ImageDraw.Draw(image)
+                font = ImageFont.truetype(FONT_PATH, size=55)
+                # 이미지 처리 및 추가 작업 수행
+                st.image(image, caption="신청서 미리보기", use_column_width=True)
+            else:
+                st.error(f"이미지를 찾을 수 없습니다: {img_path}")
         except FileNotFoundError:
             st.error(f"이미지를 찾을 수 없습니다: {img_path}")
         except Exception as e:
