@@ -70,6 +70,12 @@ if logo_base64:
             <h3 style="margin: 0;">온양한올고등학교</h3>
         </div>
     """, unsafe_allow_html=True)
+else:
+    st.markdown(f"""
+        <div style="display: flex; align-items: center;">
+            <h3 style="margin: 0;">온양한올고등학교</h3>
+        </div>
+    """, unsafe_allow_html=True)
 
 # 단일 탭 그룹 생성
 tabs = st.tabs([
