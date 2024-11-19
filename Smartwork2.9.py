@@ -10,37 +10,59 @@ import holidays
 import img2pdf
 import os
 import io
-import tempfile
 import base64
+from pathlib import Path
 
-# 현재 스텝 세션 초기화
+# 애플리케이션 리소스 경로 설정
+def get_resource_path(relative_path):
+    """상대 경로를 기반으로 리소스의 절대 경로를 반환합니다."""
+    try:
+        # PyInstaller의 임시 폴더 경로 가져오기 시도
+        base_path = Path(os._MEIPASS)
+    except Exception:
+        # 개발 환경에서는 현재 디렉토리 사용
+        base_path = Path(os.path.abspath("."))
+    
+    return base_path / relative_path
+
+# 필요한 디렉토리 생성
+def ensure_directories():
+    """필요한 디렉토리들이 존재하는지 확인하고 없으면 생성합니다."""
+    directories = ['output', 'temp']
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)
+
+# 초기 설정
+ensure_directories()
+
+# 세션 상태 초기화
 if 'step' not in st.session_state:
     st.session_state.step = 1
 
-# 교외체험 학습 계획 저장을 위한 초기화
 if 'plans' not in st.session_state:
     st.session_state.plans = {}
 
-# 로고 파일 경로 - 상대 경로로 수정하여 배포 시 호환성 유지
-logo_path = os.path.join(os.path.dirname(__file__), 'images', 'logo.png')  # 로고 이미지 경로
+# 리소스 파일 경로 설정
+LOGO_PATH = get_resource_path("images/logo.png")
+FORM_TEMPLATE_PATH = get_resource_path("images/studywork001.png")
+EXTRA_FORM_PATH = get_resource_path("images/studywork002.png")
+FONT_PATH = get_resource_path("font/AppleGothic.ttf")
 
-# 로컬 이미지 파일을 Base64로 변환하는 함수
+# Base64 인코딩 함수
 def get_base64_image(image_path):
     try:
         with open(image_path, "rb") as img_file:
-            encoded = base64.b64encode(img_file.read()).decode()
-        return encoded
-    except FileNotFoundError:
-        st.error("로고 이미지 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
+            return base64.b64encode(img_file.read()).decode()
+    except Exception as e:
+        st.error(f"이미지 로드 실패: {e}")
         return None
 
-# Base64 인코딩된 로고 이미지 로드
-logo_base64 = get_base64_image(logo_path)
+# 로고 이미지 로드
+logo_base64 = get_base64_image(LOGO_PATH)
 
-# 헤더 영역 추가
+# UI 구성
 st.title("교외체험학습 신청서")
 
-# 로고와 서브타이틀을 왼쪽에 배치 (로고가 존재할 경우에만)
 if logo_base64:
     st.markdown(f"""
         <div style="display: flex; align-items: center;">
@@ -48,8 +70,6 @@ if logo_base64:
             <h3 style="margin: 0;">온양한올고등학교</h3>
         </div>
     """, unsafe_allow_html=True)
-else:
-    st.markdown("### 온양한올고등학교")
 
 # 단일 탭 그룹 생성
 tabs = st.tabs([
@@ -223,13 +243,9 @@ with tabs[4]:
 with tabs[5]:
     st.header("신청서 확인")
 
-    # 이미지 파일 경로 설정 - 로컬 및 배포 환경 모두에서 호환되도록 수정
-    if os.path.exists('/Users/kiyun/Documents/Study-work/images/studywork001.png'):
-        img_path = '/Users/kiyun/Documents/Study-work/images/studywork001.png'
-        extra_img_path = '/Users/kiyun/Documents/Study-work/images/studywork002.png'
-    else:
-        img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork001.png')
-        extra_img_path = os.path.join(os.path.dirname(__file__), 'images', 'studywork002.png')  # 별지 이미지
+    # 이미지 파일 경로 설정
+    img_path = "/Users/kiyun/Documents/Study-work/images/studywork001.png"
+    extra_img_path = "/Users/kiyun/Documents/Study-work/images/studywork002.png"  # 별지 이미지
 
     # 필수 데이터 유효성 검사
     required_fields = [
@@ -245,7 +261,7 @@ with tabs[5]:
             # 이미지 로드 및 설정
             image = Image.open(img_path).convert("RGBA")
             draw = ImageDraw.Draw(image)
-            font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'AppleGothic.ttf')  # 배포용 경로로 수정
+            font_path = "/Library/Fonts/AppleGothic.ttf"  # Mac 기본 폰트
             font = ImageFont.truetype(font_path, size=55)
 
             # 날짜 계산 로직 (교외체험학습)
@@ -256,7 +272,7 @@ with tabs[5]:
             submit_date_formatted = today.strftime("%Y년 %m월 %d일")
             
             try:
-                if isinstance(start_date, date) and isinstance(end_date, date):
+                if isinstance(start_date, datetime.date) and isinstance(end_date, datetime.date):
                     duration = (end_date - start_date).days + 1  # 시작일과 종료일 포함
                     start_date_formatted = start_date.strftime("%Y년 %m월 %d일")
                     end_date_formatted = end_date.strftime("%Y년 %m월 %d일")
@@ -265,10 +281,6 @@ with tabs[5]:
             except Exception as e:
                 st.error(f"날짜 계산 중 오류 발생: {e}")
                 st.stop()
-        except FileNotFoundError:
-            st.error("이미지 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
-        except Exception as e:
-            st.error(f"이미지 처리 중 오류 발생: {e}")
 
             # 출석인정 기간 계산 (공휴일 제외)
             attendance_start_date = st.session_state.get("attendance_start_date")
@@ -452,49 +464,44 @@ with tabs[5]:
         except IOError as e:
             st.error(f"이미지를 처리하는 중 오류가 발생했습니다: {e}")
 
-    # PDF 생성 함수 정의
+    # PDF 생성 함수 수정
     def generate_pdf():
         try:
-            # 임시 파일 경로 설정 - 상대 경로로 수정하여 배포 시 호환성 유지
-            temp_dir = os.path.join(os.path.dirname(__file__), 'temp')
-            os.makedirs(temp_dir, exist_ok=True)
-            main_image_path = os.path.join(temp_dir, 'studywork_main.png')
-            extra_image_path = os.path.join(temp_dir, 'studywork_extra.png')
+            # 임시 파일 생성
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as main_temp:
+                image.save(main_temp.name)
+                main_image_path = main_temp.name
 
-            # 이미지 파일 저장
-            image.save(main_image_path)
-            if 'extra_needed' in st.session_state and st.session_state['extra_needed']:
-                extra_image.save(extra_image_path)
+            extra_image_path = None
+            if extra_needed:
+                with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as extra_temp:
+                    extra_image.save(extra_temp.name)
+                    extra_image_path = extra_temp.name
 
             # PDF 생성할 이미지 파일 목록
             image_list = [main_image_path]
-            if 'extra_needed' in st.session_state and st.session_state['extra_needed']:
+            if extra_image_path:
                 image_list.append(extra_image_path)
 
-            # PDF 파일 경로 설정 - 상대 경로로 수정하여 배포 시 호환성 유지
-            pdf_path = os.path.join(os.path.dirname(__file__), 'output', 'studywork_application.pdf')
-            os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+            # PDF 생성
+            pdf_data = img2pdf.convert(image_list)
 
-            # PDF 파일 생성
-            with open(pdf_path, "wb") as f:
-                f.write(img2pdf.convert(image_list))
-
-            # 생성된 PDF 파일 다운로드 버튼 추가
-            with open(pdf_path, "rb") as f:
-                st.download_button(
-                    label="신청서 PDF 다운로드",
-                    data=f,
-                    file_name="교외체험학습_신청서.pdf",
-                    mime="application/pdf"
-                )
+            # 다운로드 버튼 추가
+            st.download_button(
+                label="신청서 PDF 다운로드",
+                data=pdf_data,
+                file_name="교외체험학습_신청서.pdf",
+                mime="application/pdf"
+            )
 
             # 임시 파일 삭제
-            os.remove(main_image_path)
-            if 'extra_needed' in st.session_state and st.session_state['extra_needed']:
-                os.remove(extra_image_path)
+            os.unlink(main_image_path)
+            if extra_image_path:
+                os.unlink(extra_image_path)
 
         except Exception as e:
             st.error(f"PDF 생성 중 오류 발생: {e}")
 
+    # PDF 생성 버튼
     if st.button("PDF 파일 생성 및 다운로드", key="pdf_download_button"):
         generate_pdf()

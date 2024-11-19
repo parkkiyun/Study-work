@@ -1,7 +1,7 @@
 streamlit
-Pillow
 pandas
+Pillow
 numpy
-holidays
-img2pdf
 streamlit-drawable-canvas
+korean_holidays
+img2pdf
