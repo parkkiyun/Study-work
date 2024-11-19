@@ -244,14 +244,13 @@ with tabs[4]:
     if guardian_signature.image_data is not None:
         st.session_state['guardian_signature_img'] = guardian_signature.image_data
 
-
 # 신청서 확인 탭
-with tabs[5]:
+with st.tabs(["신청서 확인"])[0]:
     st.header("신청서 확인")
 
     # 이미지 파일 경로 설정
-    img_path = "/Users/kiyun/Documents/Study-work/images/studywork001.png"
-    extra_img_path = "/Users/kiyun/Documents/Study-work/images/studywork002.png"  # 별지 이미지
+    img_path = FORM_TEMPLATE_PATH
+    extra_img_path = EXTRA_FORM_PATH  # 별지 이미지
 
     # 필수 데이터 유효성 검사
     required_fields = [
@@ -267,8 +266,12 @@ with tabs[5]:
             # 이미지 로드 및 설정
             image = Image.open(img_path).convert("RGBA")
             draw = ImageDraw.Draw(image)
-            font_path = "/Library/Fonts/AppleGothic.ttf"  # Mac 기본 폰트
-            font = ImageFont.truetype(font_path, size=55)
+            font = ImageFont.truetype(FONT_PATH, size=55)
+            # 이미지 처리 및 추가 작업 수행
+        except FileNotFoundError:
+            st.error(f"이미지를 찾을 수 없습니다: {img_path}")
+        except Exception as e:
+            st.error(f"이미지 로드 실패: {e}")
 
             # 날짜 계산 로직 (교외체험학습)
             start_date = st.session_state.get("start_date")
