@@ -267,7 +267,11 @@ with st.tabs(["신청서 확인"])[0]:
             if os.path.exists(img_path):
                 image = Image.open(img_path).convert("RGBA")
                 draw = ImageDraw.Draw(image)
-                font = ImageFont.truetype(FONT_PATH, size=55)
+                try:
+                    font = ImageFont.truetype(FONT_PATH, size=55)
+                except IOError:
+                    st.warning("지정된 폰트를 찾을 수 없어 기본 폰트를 사용합니다.")
+                    font = ImageFont.load_default()
                 # 이미지 처리 및 추가 작업 수행
                 st.image(image, caption="신청서 미리보기", use_column_width=True)
             else:
