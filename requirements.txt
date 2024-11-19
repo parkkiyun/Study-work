@@ -3,5 +3,5 @@ pandas
 Pillow
 numpy
 streamlit-drawable-canvas
-korean_holidays
+holidays
 img2pdf
