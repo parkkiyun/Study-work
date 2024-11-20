@@ -23,7 +23,7 @@ class ResourceManager:
         
         # 파일 경로 설정
         self.paths = {
-            "신청서 양식": self.image_dir / "studywork001.png",
+            "신청서 양식": self.image_dir / "studywork003.png",
             "별지 양식": self.image_dir / "studywork002.png",
             "로고": self.image_dir / "logo.png",
             "폰트": self.font_dir / "AppleGothic.ttf"
@@ -434,7 +434,7 @@ with tabs[6]:
     st.header("결과보고서 확인")
 
     # 이미지 파일 경로 설정
-    img_path = IMAGE_DIR / "studywork001.png"
+    img_path = IMAGE_DIR / "studywork003.png"
     extra_img_path = IMAGE_DIR / "studywork002.png"  # 별지 이미지
 
     # 필수 데이터 유효성 검사
