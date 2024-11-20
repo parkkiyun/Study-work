@@ -523,7 +523,7 @@ with tabs[6]:
             # 기본 정보 그리기
             draw.text((750, 590), st.session_state.get("student_name", ""), fill="black", font=font)
             draw.text((1830, 590), st.session_state.get("student_grade", "").replace('학년', ''), fill="black", font=font)
-            draw.text((2050, 590), st.session_state.get("student_class", "").replace('반', ''), fill="black", font=font)
+            draw.text((2020, 590), st.session_state.get("student_class", "").replace('반', ''), fill="black", font=font)
             draw.text((2200, 590), str(st.session_state.get("student_number", "")), fill="black", font=font)
 
             # 교외체험학습 기간 그리기
@@ -568,8 +568,8 @@ with tabs[6]:
             draw.text((2150, 1470), st.session_state.get("chaperone_contact", ""), fill="black", font=font)
             draw.text((1540, 1330), st.session_state.get("guardian_relationship", ""), fill="black", font=font)
             draw.text((1540, 1470), st.session_state.get("chaperone_relationship", ""), fill="black", font=font)
-            draw.text((2250, 3500), st.session_state.get("student_name", ""), fill="black", font=font)
-            draw.text((2250, 3580), st.session_state.get("guardian_name", ""), fill="black", font=font)
+            draw.text((2250, 3450), st.session_state.get("student_name", ""), fill="black", font=font)
+            draw.text((2250, 3600), st.session_state.get("guardian_name", ""), fill="black", font=font)
 
             def add_signatures(image):
                 """서명 이미지를 신청서에 추가하는 헬퍼 함수"""
@@ -577,16 +577,16 @@ with tabs[6]:
                     student_signature_img = Image.fromarray(np.array(st.session_state['student_signature_img']).astype('uint8')).convert("RGBA")
                     new_size = (int(student_signature_img.width), int(student_signature_img.height))
                     student_signature_img = student_signature_img.resize(new_size, Image.Resampling.LANCZOS)
-                    image.paste(student_signature_img, (2400, 3500), student_signature_img)
+                    image.paste(student_signature_img, (2400, 3450), student_signature_img)
 
                 if 'guardian_signature_img' in st.session_state:
                     guardian_signature_img = Image.fromarray(np.array(st.session_state['guardian_signature_img']).astype('uint8')).convert("RGBA")
                     new_size = (int(guardian_signature_img.width), int(guardian_signature_img.height))
                     guardian_signature_img = guardian_signature_img.resize(new_size, Image.Resampling.LANCZOS)
-                    image.paste(guardian_signature_img, (2400, 3580), guardian_signature_img)
+                    image.paste(guardian_signature_img, (2400, 3600), guardian_signature_img)
 
             # 학습 계획 데이터 처리를 위한 변수 초기화
-            x_start, y_start = 500, 1770  # 첫 번째 칸 시작 치
+            x_start, y_start = 400, 1770  # 첫 번째 칸 시작 치
             max_y = 3200
             font_size = 50
             min_font_size = 30
@@ -644,7 +644,7 @@ with tabs[6]:
                 second_section_plans = "".join(second_section)
 
                 # 계획 텍스트 그리기
-                draw.text((500, 1770), first_section_plans, fill="black", 
+                draw.text((400, 1770), first_section_plans, fill="black", 
                         font=ImageFont.truetype(font_path, size=font_size))
                 if second_section_plans:
                     draw.text((1700, 1770), second_section_plans, fill="black", 
