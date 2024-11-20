@@ -15,36 +15,98 @@ import base64
 import pathlib
 import sys
 
-# 프로젝트 루트 디렉토리 설정
-BASE_DIR = pathlib.Path(__file__).parent.parent.resolve()
+class ResourceManager:
+    def __init__(self):
+        self.base_dir = self.get_absolute_path()
+        self.image_dir = self.base_dir / "images"
+        self.font_dir = self.base_dir / "fonts"
+        
+        # 파일 경로 설정
+        self.paths = {
+            "신청서 양식": self.image_dir / "studywork001.png",
+            "별지 양식": self.image_dir / "studywork002.png",
+            "로고": self.image_dir / "logo.png",
+            "폰트": self.font_dir / "AppleGothic.ttf"
+        }
+        
+        # 시스템 폰트 백업 경로
+        self.system_font_paths = [
+            "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+            "/System/Library/Fonts/AppleGothic.ttf",
+            "C:\\Windows\\Fonts\\malgun.ttf"
+        ]
 
-# 이미지 디렉토리 설정
-IMAGE_DIR = BASE_DIR / "images"
+    @staticmethod
+    def get_absolute_path():
+        """Get the absolute path for the application."""
+        if os.path.exists("/mount/src/study-work"):
+            return pathlib.Path("/mount/src/study-work")
+        elif os.path.exists("/workspaces/Study-work"):
+            return pathlib.Path("/workspaces/Study-work")
+        else:
+            return pathlib.Path(__file__).parent.parent.resolve()
 
-# 폰트 디렉토리 설정
-FONT_DIR = BASE_DIR / "fonts"
+    def get_font_path(self):
+        """폰트 파일 경로를 찾아 반환"""
+        if self.paths["폰트"].exists():
+            return str(self.paths["폰트"])
+        
+        for system_font in self.system_font_paths:
+            if os.path.exists(system_font):
+                return system_font
+        
+        st.error("폰트 파일을 찾을 수 없습니다.")
+        st.info("나눔고딕 폰트를 설치하거나 fonts 디렉토리에 폰트 파일을 추가해주세요.")
+        st.stop()
 
-# 이미지 파일 경로 설정
-img_path = IMAGE_DIR / "studywork001.png"
-extra_img_path = IMAGE_DIR / "studywork002.png"
-logo_path = IMAGE_DIR / "logo.png"
+    def validate_resources(self):
+        """리소스 파일 검증"""
+        for name, path in self.paths.items():
+            if name != "폰트" and not path.exists():
+                st.error(f"{name}을(를) 찾을 수 없습니다. 경로: {path}")
+                st.stop()
+        
+        self.font_path = self.get_font_path()
 
-# 파일 존재 여부 확인
-if not img_path.exists():
-    st.error(f"신청서 양식 이미지를 찾을 수 없습니다. 경로: {img_path}")
-    st.stop()
+    def print_debug_info(self):
+        """디버깅 정보 출력"""
+        st.write("현재 경로 정보:")
+        st.write(f"BASE_DIR: {self.base_dir}")
+        st.write(f"IMAGE_DIR: {self.image_dir}")
+        st.write(f"FONT_DIR: {self.font_dir}")
+        st.write(f"사용 중인 폰트 경로: {self.font_path}")
 
-if not logo_path.exists():
-    st.error(f"로고 이미지를 찾을 수 없습니다. 경로: {logo_path}")
-    st.stop()
+# ResourceManager 인스턴스 생성
+resources = ResourceManager()
 
-if not extra_img_path.exists():
-    st.error(f"별지 양식을 찾을 수 없습니다. 경로: {extra_img_path}")
-    st.stop()
+# 디버깅 정보 출력 (필요한 경우)
+if os.getenv('STREAMLIT_DEBUG') == 'true':
+    resources.print_debug_info()
 
-if not font_path.exists():
-    st.error(f"폰트 파일을 찾을 수 없습니다. 경로: {font_path}")
-    st.stop()
+# 리소스 검증
+resources.validate_resources()
+
+# 전역 변수로 경로 설정
+BASE_DIR = resources.base_dir
+IMAGE_DIR = resources.image_dir
+FONT_DIR = resources.font_dir
+img_path = resources.paths["신청서 양식"]
+extra_img_path = resources.paths["별지 양식"]
+logo_path = resources.paths["로고"]
+font_path = resources.font_path
+
+# 디버깅을 위한 경로 출력
+if os.getenv('STREAMLIT_DEBUG') == 'true':
+    st.write(f"""
+    현재 설정된 경로:
+    - 기본 경로: {BASE_DIR}
+    - 이미지 경로: {IMAGE_DIR}
+    - 폰트 경로: {FONT_DIR}
+    - 신청서 양식: {img_path}
+    - 별지 양식: {extra_img_path}
+    - 로고: {logo_path}
+    - 폰트: {font_path}
+    """)
 
 # 1. 세션 상태 초기화 부분 수정
 if 'student_canvas_key' not in st.session_state:
@@ -194,10 +256,10 @@ with tabs[2]:
                 with col3:
                     plan['활동내용'] = st.text_input(f"{day}일차 활동내용 {idx+1}", value=plan.get('활동내용', ""), key=f"activity_{day}_{idx}")
 
-            # 새로운 일정 추가 버튼
+            # 새로��� 일정 추가 버튼
             if st.button(f"{day}일차 일정 추가", key=f"add_{day}"):
                 st.session_state.plans[f"{day}일차"].append({"시간": "", "장소": "", "활동내용": ""})
-                st.rerun()  # 버 클릭 �� 즉시 리렌더링
+                st.rerun()  # 버 클릭  즉시 리렌더링
 
         # 전체 저장 버튼
         if st.button("모든 일정 저장"):
@@ -205,7 +267,7 @@ with tabs[2]:
             # st.write(st.session_state.plans)  # 데이터 출력 제거
 
     else:
-        st.warning("교외체험학습 시작일과 종료일을 설정해주세요.")
+        st.warning("교외체험학습 시작일과 종료일을 정해주세요.")
 
 # 보호자 정보 입력 탭
 with tabs[3]:
@@ -529,7 +591,7 @@ with tabs[6]:
             font_size = 50
             min_font_size = 30
             extra_needed = False
-            first_section_plans = ""  # 첫 번째 칸 계획
+            first_section_plans = ""  # 첫 번 칸 계획
             second_section_plans = ""  # 두 번째 칸 계획
             remaining_plans = ""  # 남은 계획 (폰트 축소 후에도 넘치는 경우)
 
@@ -600,7 +662,7 @@ with tabs[6]:
                     # 별지 크기 가져오기
                     page_width, page_height = extra_image.size
                     
-                    # 4등분 ���역 계산 (여백 고려)
+                    # 4등분 역 계산 (여백 고려)
                     margin = 50  # 여백
                     section_width = (page_width - (3 * margin)) // 2
                     section_height = (page_height - (3 * margin)) // 2
