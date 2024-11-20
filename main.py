@@ -4,7 +4,7 @@ from PIL import Image
 # 기본 홈 페이지 내용
 st.title("교외체험학습 관리 시스템", anchor="center")
 logo = Image.open('images/logo.png')
-col1, col2 = st.columns([0.5, 8])
+col1, col2 = st.columns([0.8, 8])
 with col1:
     st.image(logo, use_column_width=True)
 with col2:
