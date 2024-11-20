@@ -4,12 +4,20 @@ from PIL import Image
 # 기본 홈 페이지 내용
 st.title("교외체험학습 관리 시스템", anchor="center")
 logo = Image.open('images/logo.png')
-col1, col2 = st.columns([0.8, 8])
+col1, col2 = st.columns([0.5, 8])
 with col1:
     st.image(logo, use_column_width=True)
 with col2:
     st.subheader("온양한올고등학교", anchor="center")
 
+# 사이드바 내용 추가
+st.sidebar.title("사이드바 메뉴")
+st.sidebar.markdown("**교외체험학습 관리 메뉴**")
+st.sidebar.info("여기서 페이지를 이동하거나 추가 정보를 확인할 수 있습니다.")
+st.sidebar.button("신청서 작성")
+st.sidebar.button("결과보고서 작성")
+
+# 메인 페이지 설명
 st.write("이 앱은 교외체험학습 신청서 및 결과보고서를 작성하기 위한 멀티페이지 애플리케이션입니다.")
 
 st.subheader("페이지 설명")
