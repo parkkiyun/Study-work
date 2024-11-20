@@ -548,15 +548,15 @@ with tabs[6]:
             elif learning_type == "문학 기행":
                 draw.text((2450, 875), "0", fill="black", font=font)
             elif learning_type == "우리 문화 및 세계 문화 체험":
-                draw.text((1225, 945), "0", fill="black", font=font)
+                draw.text((1235, 945), "0", fill="black", font=font)
             elif learning_type == "국토 순례":
-                draw.text((1580, 945), "0", fill="black", font=font)
+                draw.text((1590, 945), "0", fill="black", font=font)
             elif learning_type == "자연 탐사":
                 draw.text((1970, 945), "0", fill="black", font=font)
             elif learning_type == "직업 체험":
-                draw.text((2340, 945), "0", fill="black", font=font)
+                draw.text((2350, 945), "0", fill="black", font=font)
             elif learning_type == "기타":
-                draw.text((2600, 945), "0", fill="black", font=font)
+                draw.text((2620, 945), "0", fill="black", font=font)
             else:
                 draw.text((300, 460), "학습 형태를 선택하세요", fill="red", font=font)
 
@@ -568,7 +568,7 @@ with tabs[6]:
             draw.text((2150, 1470), st.session_state.get("chaperone_contact", ""), fill="black", font=font)
             draw.text((1540, 1330), st.session_state.get("guardian_relationship", ""), fill="black", font=font)
             draw.text((1540, 1470), st.session_state.get("chaperone_relationship", ""), fill="black", font=font)
-            draw.text((2250, 3450), st.session_state.get("student_name", ""), fill="black", font=font)
+            draw.text((2250, 3460), st.session_state.get("student_name", ""), fill="black", font=font)
             draw.text((2250, 3600), st.session_state.get("guardian_name", ""), fill="black", font=font)
 
             def add_signatures(image):
