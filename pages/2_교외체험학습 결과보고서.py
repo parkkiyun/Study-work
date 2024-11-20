@@ -16,7 +16,7 @@ import pathlib
 import sys
 
 # 프로젝트 루트 디렉토리 설정
-BASE_DIR = pathlib.Path(__file__).parent.resolve()
+BASE_DIR = pathlib.Path(__file__).parent.parent.resolve()
 
 # 이미지 디렉토리 설정
 IMAGE_DIR = BASE_DIR / "images"
@@ -197,7 +197,7 @@ with tabs[2]:
             # 새로운 일정 추가 버튼
             if st.button(f"{day}일차 일정 추가", key=f"add_{day}"):
                 st.session_state.plans[f"{day}일차"].append({"시간": "", "장소": "", "활동내용": ""})
-                st.rerun()  # 버 클릭 후 즉시 리렌더링
+                st.rerun()  # 버 클릭 �� 즉시 리렌더링
 
         # 전체 저장 버튼
         if st.button("모든 일정 저장"):
@@ -600,7 +600,7 @@ with tabs[6]:
                     # 별지 크기 가져오기
                     page_width, page_height = extra_image.size
                     
-                    # 4등분 영역 계산 (여백 고려)
+                    # 4등분 ���역 계산 (여백 고려)
                     margin = 50  # 여백
                     section_width = (page_width - (3 * margin)) // 2
                     section_height = (page_height - (3 * margin)) // 2
