@@ -521,8 +521,8 @@ with tabs[6]:
                 st.stop()
 
             # 기본 정보 그리기
-            draw.text((770, 590), st.session_state.get("student_name", ""), fill="black", font=font)
-            draw.text((1860, 590), st.session_state.get("student_grade", "").replace('학년', ''), fill="black", font=font)
+            draw.text((750, 590), st.session_state.get("student_name", ""), fill="black", font=font)
+            draw.text((1830, 590), st.session_state.get("student_grade", "").replace('학년', ''), fill="black", font=font)
             draw.text((2050, 590), st.session_state.get("student_class", "").replace('반', ''), fill="black", font=font)
             draw.text((2200, 590), str(st.session_state.get("student_number", "")), fill="black", font=font)
 
@@ -535,7 +535,7 @@ with tabs[6]:
             draw.text((1250, 800), attendance_start_formatted, fill="black", font=font)
             draw.text((1850, 800), attendance_end_formatted, fill="black", font=font)
             draw.text((2400, 800), f"{attendance_duration}", fill="black", font=font)
-            draw.text((1250, 3270), submit_date_formatted, fill="black", font=font)  # 제출일 추가
+            draw.text((1250, 3350), submit_date_formatted, fill="black", font=font)  # 제출일 추가
 
             # 학습 태에 따라 '0'의 위치 조정
             learning_type = st.session_state.get("learning_type", "")
@@ -568,8 +568,8 @@ with tabs[6]:
             draw.text((2150, 1470), st.session_state.get("chaperone_contact", ""), fill="black", font=font)
             draw.text((1540, 1330), st.session_state.get("guardian_relationship", ""), fill="black", font=font)
             draw.text((1540, 1470), st.session_state.get("chaperone_relationship", ""), fill="black", font=font)
-            draw.text((2250, 3400), st.session_state.get("student_name", ""), fill="black", font=font)
-            draw.text((2250, 3530), st.session_state.get("guardian_name", ""), fill="black", font=font)
+            draw.text((2250, 3500), st.session_state.get("student_name", ""), fill="black", font=font)
+            draw.text((2250, 3580), st.session_state.get("guardian_name", ""), fill="black", font=font)
 
             def add_signatures(image):
                 """서명 이미지를 신청서에 추가하는 헬퍼 함수"""
@@ -577,17 +577,17 @@ with tabs[6]:
                     student_signature_img = Image.fromarray(np.array(st.session_state['student_signature_img']).astype('uint8')).convert("RGBA")
                     new_size = (int(student_signature_img.width), int(student_signature_img.height))
                     student_signature_img = student_signature_img.resize(new_size, Image.Resampling.LANCZOS)
-                    image.paste(student_signature_img, (2400, 3350), student_signature_img)
+                    image.paste(student_signature_img, (2400, 3500), student_signature_img)
 
                 if 'guardian_signature_img' in st.session_state:
                     guardian_signature_img = Image.fromarray(np.array(st.session_state['guardian_signature_img']).astype('uint8')).convert("RGBA")
                     new_size = (int(guardian_signature_img.width), int(guardian_signature_img.height))
                     guardian_signature_img = guardian_signature_img.resize(new_size, Image.Resampling.LANCZOS)
-                    image.paste(guardian_signature_img, (2400, 3500), guardian_signature_img)
+                    image.paste(guardian_signature_img, (2400, 3580), guardian_signature_img)
 
             # 학습 계획 데이터 처리를 위한 변수 초기화
-            x_start, y_start = 580, 1570  # 첫 번째 칸 시작 치
-            max_y = 2900
+            x_start, y_start = 500, 1770  # 첫 번째 칸 시작 치
+            max_y = 3200
             font_size = 50
             min_font_size = 30
             extra_needed = False
@@ -644,10 +644,10 @@ with tabs[6]:
                 second_section_plans = "".join(second_section)
 
                 # 계획 텍스트 그리기
-                draw.text((580, 1570), first_section_plans, fill="black", 
+                draw.text((500, 1770), first_section_plans, fill="black", 
                         font=ImageFont.truetype(font_path, size=font_size))
                 if second_section_plans:
-                    draw.text((1700, 1570), second_section_plans, fill="black", 
+                    draw.text((1700, 1770), second_section_plans, fill="black", 
                             font=ImageFont.truetype(font_path, size=font_size))
 
                 # 서명 추가 후 기본 신청서 이미지 출력
