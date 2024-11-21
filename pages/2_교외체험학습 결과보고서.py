@@ -742,3 +742,24 @@ with tabs[6]:
 
     if st.button("PDF 파일 생성 및 다운로드", key="pdf_download_button"):
         generate_pdf()
+
+
+# HTML과 CSS로 푸터 추가
+footer = """
+    <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+    <div class="footer">
+        제작자: 박기윤
+    </div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
