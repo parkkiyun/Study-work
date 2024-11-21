@@ -32,3 +32,23 @@ st.info("""
 """)
 
 st.info("왼쪽 사이드바를 사용해 페이지를 이동하세요.")
+
+# HTML과 CSS로 푸터 추가
+footer = """
+    <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+    <div class="footer">
+        제작자: 박기윤
+    </div>
+"""
+st.markdown(footer, unsafe_allow_html=True)
